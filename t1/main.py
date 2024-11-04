@@ -1,39 +1,41 @@
-from src.tag_processor import apply_tag_rules, AllowedTagRecord
+import sys
+
+from pathlib import Path
+from src.parsers import ArgumentParser
+from src.parsers.argument_parser import print_help
+from src.utils.record_transformer import transform_html_to_records
+from src.processors import apply_tag_rules
+
+
+def main():
+    arg_parser = ArgumentParser()
+    args = sys.argv[1:]
+    arg_parser.parse_args(args)
+
+    if arg_parser.show_help:
+        print_help()
+        return
+
+    input_file = arg_parser.input_file
+    if input_file == "stdin":
+        tags = input()
+    else:
+        tags = Path(input_file).read_text()
+
+    rules = transform_html_to_records(arg_parser.rules_table_path)
+    result_tags = apply_tag_rules(
+        tags,
+        rules,
+        task_id=arg_parser.task_id,
+        delayed_clean=arg_parser.delayed_clean
+    )
+
+    output_file = arg_parser.output_file
+    if output_file == "stdout":
+        print(result_tags)
+    else:
+        Path(output_file).write_text(result_tags, encoding="utf-8")
 
 
 if __name__ == '__main__':
-    # пример таблицы правил
-    rules = (
-        # зарезервированный тег, менять нельзя
-        AllowedTagRecord("SRS", immutable=True),
-        AllowedTagRecord("web_engine"),
-        # тег с известными синонимами
-        AllowedTagRecord("sms", "сообщения, messages"),
-        AllowedTagRecord("x86", "QEMU, кему"),
-        # тег, при наличии в составе тега, нужно вывести в отдельный, есть
-        # синоним
-        AllowedTagRecord("svc", "Service", separated=True),
-        AllowedTagRecord("contacts", "контакты"),
-        AllowedTagRecord("display", "lcd, дисплей"),
-        AllowedTagRecord("AUTO", immutable=True),
-        AllowedTagRecord("lock_screen", "экран блокировки", separated=True),
-    )
-
-    for input_tags, expected_tags in (
-            # тег WebEngine заменился на тег из правил web_engine
-            # тег AUTO остался неизменным
-            ("WebEngine; AUTO", "web_engine; AUTO"),
-            # тег-синоним заменился на исходный
-            ("экран блокировки; дисплэй", "lock_screen"),
-            # тег-синоним заменился на исходный
-            ("КеМу", "x86"),
-            # тег разделился на два из-за наличия svc
-            ("DisplaySvc", "display; svc"),
-            # неизвестный тег, удаляем
-            ("SomeTrashTag", ""),
-            # нет тегов, ну и не надо
-            ("", ""),
-            # неизвестный тег удален, известный синоним заменен
-            ("unknown-tag; lcd", "display"),
-    ):
-        assert apply_tag_rules(input_tags, rules) == expected_tags
+    main()
