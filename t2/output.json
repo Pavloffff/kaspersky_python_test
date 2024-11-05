@@ -1,0 +1,50 @@
+{
+    "kafka": {
+        "replicas": 3,
+        "memory": 250.0,
+        "cpu": 5.97,
+        "storage": 3.524
+    },
+    "elasticsearch": {
+        "replicas": 3,
+        "memory": 0,
+        "cpu": 3,
+        "storage": 0.512
+    },
+    "processor": {
+        "replicas": 3,
+        "memory": 750.0,
+        "cpu": 3,
+        "storage": 4.574
+    },
+    "server": {
+        "replicas": 2,
+        "memory": 750,
+        "cpu": 1,
+        "storage": 17.516
+    },
+    "database_server": {
+        "replicas": 1,
+        "memory": 400000.0,
+        "cpu": 1,
+        "storage": 8959.936
+    },
+    "clickhouse": {
+        "replicas": 1,
+        "memory": 400000.0,
+        "cpu": 1,
+        "storage": 1.141
+    },
+    "synchronizer": {
+        "replicas": 1,
+        "memory": 80.0,
+        "cpu": 1,
+        "storage": 2.2
+    },
+    "scanner": {
+        "replicas": 1,
+        "memory": 300,
+        "cpu": 1,
+        "storage": 2.2
+    }
+}
