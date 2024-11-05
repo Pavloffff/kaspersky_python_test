@@ -1,4 +1,4 @@
-from typing import Dict, Set
+from typing import Dict
 
 from src.cache import TagCache
 from src.entities import AllowedTagRecord
